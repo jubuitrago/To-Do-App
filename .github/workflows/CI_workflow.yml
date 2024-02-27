@@ -29,4 +29,20 @@ jobs:
     - run: sudo apt install python2 g++ make -y
     - run: sudo apt install yarn -y
     - run: yarn install --production
+
+
+
+
+
+
+    - name: Docker Build & Push Action
+    - uses: mr-smithers-excellent/docker-build-push@v6.3
+    - with:
+        image: jubuitrago/jubuitrag
+        tags: latest
+        registry: docker.io
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+            
+    
     
