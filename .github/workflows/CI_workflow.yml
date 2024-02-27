@@ -29,6 +29,6 @@ jobs:
     - run: sudo apt install python2 g++ make -y
     - run: sudo apt install yarn -y
     - run: yarn install --production
-    - run: node src/index.js
+    - run: sudo node src/index.js
 
     
