@@ -26,8 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: sudo apt install python2 g++ make -y
-    - run: sudo apt install yarn -y
-    - run: yarn install --production
-    - run: sudo node src/index.js
+    - run: apt install python2 g++ make -y
+    - run: apt install yarn -y
+    - run: install --production
     
