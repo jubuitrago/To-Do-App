@@ -26,5 +26,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: apk add --no-cache python2 g++ make
-    - run: cd app/
+    - run: sudo apt install python2 g++ make -y
+    
