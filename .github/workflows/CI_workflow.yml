@@ -42,7 +42,7 @@ jobs:
     needs: build
     steps:
       - name: Run tests
-        run: yarn test
+        run: sudo yarn test
   
   export-image:
     runs-on: self-hosted
