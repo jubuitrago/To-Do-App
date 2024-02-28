@@ -1,44 +1,73 @@
-name: Node.js CI
+name: CI Workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+      - develop
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+        node-version: [18.x]
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        
-    - name: install dependencies
-      run: |
-        sudo apt install python2 g++ make -y
-        sudo apt install yarn -y
-        yarn install --production
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Install dependencies
+        run: |
+          sudo apt install python2 g++ make -y
+          sudo apt install yarn -y
+      - name: Yarn install
+        run: |
+          sudo apt remove -y cmdtest
+          sudo apt remove -y yarn
+          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+          sudo apt-get update
+          sudo apt-get install -y yarn
+          yarn install -y
+  
+  test:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Run tests
+        run: sudo yarn test
+  
+  export-image:
+    runs-on: self-hosted
+    needs: test
+    steps:
+      - name: Docker Build & Push Action
+        uses: mr-smithers-excellent/docker-build-push@v6.3
+        with:
+          image: jubuitrago/jubuitrago
+          tags: latest
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Docker Build & Push Action
-      uses: mr-smithers-excellent/docker-build-push@v6.3
-      with:
-        image: jubuitrago/jubuitrago
-        tags: latest
-        registry: docker.io
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+  deploy:
+    runs-on: self-hosted
+    needs: export-image
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request' && github.base_ref == 'main'
+    steps:
+      - name: Deploy app
+        run: |
+          docker stop $(docker ps -q)
+          docker system prune -af
+          docker pull jubuitrago/jubuitrago:latest
+          docker tag jubuitrago/jubuitrago:latest todoappi
+          docker run -d -p 80:3000 --name todoapp todoappi
 
-            
-    
     
