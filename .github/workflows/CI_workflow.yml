@@ -27,10 +27,14 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         
-    - name: install dependencies
+    - name: Install dependencies
       run: |
         sudo apt install python2 g++ make -y
         sudo apt install yarn -y
+        
+    - name: Print current directory and yarn install
+      run: |
+        pwd
         sudo yarn install
 
     - name: Docker Build & Push Action
