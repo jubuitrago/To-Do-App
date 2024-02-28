@@ -62,9 +62,14 @@ jobs:
     needs: export-image
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request' && github.base_ref == 'main'
     steps:
+      - name: Stop all running containers
+        run: |
+          if [ "$(docker ps -q)" ]; then
+            docker stop $(docker ps -q)
+          fi
+
       - name: Deploy app
         run: |
-          docker stop $(docker ps -q)
           docker system prune -af
           docker pull jubuitrago/jubuitrago:latest
           docker tag jubuitrago/jubuitrago:latest todoappi
