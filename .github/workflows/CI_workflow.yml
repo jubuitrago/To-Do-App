@@ -58,7 +58,13 @@ jobs:
     steps:
     - name: Deploy app
       run: |
-        docker info
+        docker stop $(docker ps -q)
+        docker system prune -af
+        docker pull jubuitrago/jubuitrago:latest
+        docker tag jubuitrago/jubuitrago:latest todoappi
+        docker run -d -p 80:3000 --name todoapp todoappi
+        
+        
 
             
     
