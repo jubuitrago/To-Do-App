@@ -34,8 +34,8 @@ jobs:
         
     - name: Print current directory and yarn install
       run: |
-        sudo apt remove cmdtest
-        sudo apt remove yarn
+        sudo apt remove -y cmdtest
+        sudo apt remove -y yarn
         curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
         echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
         sudo apt-get update
