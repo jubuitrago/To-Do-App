@@ -34,8 +34,13 @@ jobs:
         
     - name: Print current directory and yarn install
       run: |
-        pwd
-        sudo yarn install
+        sudo apt remove cmdtest
+        sudo apt remove yarn
+        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+        echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+        sudo apt-get update
+        sudo apt-get install yarn -y
+        yarn install
 
     - name: Docker Build & Push Action
       uses: mr-smithers-excellent/docker-build-push@v6.3
