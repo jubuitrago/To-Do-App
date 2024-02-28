@@ -31,7 +31,7 @@ jobs:
       run: |
         sudo apt install python2 g++ make -y
         sudo apt install yarn -y
-        yarn install
+        sudo yarn install
 
     - name: Docker Build & Push Action
       uses: mr-smithers-excellent/docker-build-push@v6.3
